@@ -16,14 +16,14 @@ A toolbar widget for [Umbra](https://github.com/una-xiv/umbra) (FINAL FANTASY XI
 
 The data (nodes, times, positions) comes straight from the game files, in your client's language.
 
-The widget's interface, name included, is in English, or in French when the game client is in French.
+The widget's interface, name included, follows Umbra's language: French when Umbra is in French, English otherwise.
 
 ## Installation
 
 1. In game, open **Umbra settings → Plugins**.
 2. Add a GitHub repository: owner `Soratix`, repository `UmbraTimedNodes`.
 3. Install the plugin. Umbra restarts its framework.
-4. Switch the toolbar to edit mode and add the **Timed Nodes** widget (« Nœuds temporaires » on a French client). You can also search for `node` or `gathering`.
+4. Switch the toolbar to edit mode and add the **Timed Nodes** widget (« Nœuds temporaires » when Umbra is in French). You can also search for `node` or `gathering`.
 5. In the widget settings, set **Displayed nodes** to **Tracked nodes only (ticked)**, then tick your nodes in the **Tracked nodes** tab.
 
 Umbra offers the update whenever a new release is published here.

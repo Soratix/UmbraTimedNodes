@@ -16,14 +16,14 @@ Plugin pour [Umbra](https://github.com/una-xiv/umbra) (FINAL FANTASY XIV, via Da
 
 Les données (nœuds, horaires, positions) viennent directement des fichiers du jeu, dans la langue du client.
 
-L'interface du widget, nom compris, est en français si le jeu est en français, et en anglais sinon.
+L'interface du widget, nom compris, suit la langue d'Umbra : en français si Umbra est en français, en anglais sinon.
 
 ## Installation
 
 1. Dans le jeu, ouvrez les **paramètres d'Umbra → Plugins**.
 2. Ajoutez un dépôt GitHub : propriétaire `Soratix`, dépôt `UmbraTimedNodes`.
 3. Installez le plugin. Umbra redémarre son framework.
-4. Passez la barre d'outils en mode édition et ajoutez le widget **« Nœuds temporaires »** (« Timed Nodes » sur un client non français). Dans la recherche, vous pouvez aussi taper `récolte` ou `node`.
+4. Passez la barre d'outils en mode édition et ajoutez le widget **« Nœuds temporaires »** (« Timed Nodes » si Umbra n'est pas en français). Dans la recherche, vous pouvez aussi taper `récolte` ou `node`.
 5. Dans les réglages du widget, mettez **« Nœuds affichés »** sur **« Uniquement les nœuds suivis »**, puis cochez vos nœuds dans l'onglet **« Nœuds suivis »**.
 
 Umbra propose la mise à jour quand une nouvelle release est publiée ici.

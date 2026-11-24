@@ -5,8 +5,8 @@ namespace Umbra.TimedNodes;
 /// <summary>
 /// Textes du widget en français et en anglais.
 /// Umbra ne permet pas aux widgets tiers d'ajouter leurs clés à sa propre table I18N :
-/// on suit la langue du client du jeu (français si le jeu est en français, anglais sinon),
-/// et à défaut celle d'Umbra (I18N.GetCurrentLanguage).
+/// on suit la langue d'Umbra (I18N.GetCurrentLanguage : réglage d'Umbra, sinon langue de
+/// l'interface Dalamud), et à défaut celle du client du jeu. Français si « fr », anglais sinon.
 /// </summary>
 internal static class Strings
 {
@@ -14,13 +14,14 @@ internal static class Strings
     {
         get {
             try {
-                return Framework.Service<IClientState>().ClientLanguage == ClientLanguage.French;
+                string lang = I18N.GetCurrentLanguage();
+                if (!string.IsNullOrEmpty(lang)) return lang.StartsWith("fr", StringComparison.OrdinalIgnoreCase);
             } catch {
-                // Service Dalamud indisponible : on se rabat sur la langue d'Umbra.
+                // I18N indisponible : on se rabat sur la langue du client.
             }
 
             try {
-                return I18N.GetCurrentLanguage().StartsWith("fr", StringComparison.OrdinalIgnoreCase);
+                return Framework.Service<IClientState>().ClientLanguage == ClientLanguage.French;
             } catch {
                 return false;
             }

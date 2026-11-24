@@ -9,7 +9,7 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <AssemblyName>Umbra.TimedNodes</AssemblyName>
         <RootNamespace>Umbra.TimedNodes</RootNamespace>
-        <Version>0.2.1</Version>
+        <Version>0.2.2</Version>
         <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
