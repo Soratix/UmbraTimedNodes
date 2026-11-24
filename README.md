@@ -1,5 +1,7 @@
 # Umbra – Nœuds temporaires
 
+**Français** · [English](README.en.md)
+
 Plugin pour [Umbra](https://github.com/una-xiv/umbra) (FINAL FANTASY XIV, via Dalamud) qui ajoute un widget de barre d'outils pour suivre les **nœuds de récolte temporaires** : limités, légendaires et éphémères.
 
 ## Fonctionnalités
