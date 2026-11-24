@@ -4,8 +4,6 @@
 
 A toolbar widget for [Umbra](https://github.com/una-xiv/umbra) (FINAL FANTASY XIV, via Dalamud) that tracks **timed gathering nodes**: unspoiled, legendary and ephemeral.
 
-> The widget's in-game interface is currently in French only. Node, item and zone names follow your game client's language.
-
 ## Features
 
 - **In the toolbar:** the next node, with its item, zone and a live countdown. A progress bar shows the time left on an active node.
@@ -18,13 +16,15 @@ A toolbar widget for [Umbra](https://github.com/una-xiv/umbra) (FINAL FANTASY XI
 
 The data (nodes, times, positions) comes straight from the game files, in your client's language.
 
+The widget's interface is in English, or in French when Umbra (or, failing that, the game client) is set to French.
+
 ## Installation
 
 1. In game, open **Umbra settings → Plugins**.
 2. Add a GitHub repository: owner `Soratix`, repository `UmbraTimedNodes`.
 3. Install the plugin. Umbra restarts its framework.
-4. Switch the toolbar to edit mode and add the **« Nœuds temporaires »** widget (Timed nodes). You can also search for `récolte` or `node`.
-5. In the widget settings, set **« Nœuds affichés »** (displayed nodes) to **« Uniquement les nœuds suivis »** (tracked nodes only), then tick your nodes in the **« Nœuds suivis »** tab.
+4. Switch the toolbar to edit mode and add the **Timed Nodes** widget (listed as « Nœuds temporaires / Timed Nodes » in the widget list). You can also search for `node` or `gathering`.
+5. In the widget settings, set **Displayed nodes** to **Tracked nodes only (ticked)**, then tick your nodes in the **Tracked nodes** tab.
 
 Umbra offers the update whenever a new release is published here.
 

@@ -9,9 +9,9 @@ namespace Umbra.TimedNodes;
 
 [ToolbarWidget(
     "TimedNodesTracker",
-    "Nœuds temporaires",
-    "Affiche le prochain nœud de récolte limité, légendaire ou éphémère, avec un compte à rebours. Cliquez pour la liste complète.",
-    ["gathering", "node", "timed", "unspoiled", "legendary", "ephemeral", "récolte", "noeud", "minage", "botanique"]
+    "Nœuds temporaires / Timed Nodes",
+    "Prochain nœud de récolte limité, légendaire ou éphémère, avec compte à rebours. / Next unspoiled, legendary or ephemeral gathering node, with a countdown.",
+    ["gathering", "node", "timed", "unspoiled", "legendary", "ephemeral", "récolte", "noeud", "minage", "botanique", "miner", "botanist"]
 )]
 public sealed unsafe class TimedNodesWidget(
     WidgetInfo                  info,
@@ -41,41 +41,39 @@ public sealed unsafe class TimedNodesWidget(
 
     protected override IEnumerable<IWidgetConfigVariable> GetConfigVariables()
     {
-        const string cat = "Nœuds temporaires";
+        string cat = Strings.T("WidgetName");
 
         return [
             ..base.GetConfigVariables(),
             new SelectWidgetConfigVariable(
-                "TrackMode", "Nœuds affichés",
-                "« Nœuds suivis » : uniquement les nœuds cochés dans l'onglet « Nœuds suivis ». « Tous » : utilise les filtres de métier, niveau et mots-clés.",
+                "TrackMode", Strings.T("Cfg.TrackMode"), Strings.T("Cfg.TrackMode.Desc"),
                 "All",
-                new() { ["Tracked"] = "Uniquement les nœuds suivis (cochés)", ["All"] = "Tous les nœuds (avec filtres)" }
+                new() { ["Tracked"] = Strings.T("Cfg.TrackMode.Tracked"), ["All"] = Strings.T("Cfg.TrackMode.All") }
             ) { Category = cat },
             new SelectWidgetConfigVariable(
-                "JobFilter", "Métier (mode Tous)", "Quels nœuds afficher en mode « Tous ».", "All",
-                new() { ["All"] = "Mineur et botaniste", ["Miner"] = "Mineur", ["Botanist"] = "Botaniste" }
+                "JobFilter", Strings.T("Cfg.Job"), Strings.T("Cfg.Job.Desc"), "All",
+                new() { ["All"] = Strings.T("Cfg.Job.All"), ["Miner"] = Strings.T("Miner"), ["Botanist"] = Strings.T("Botanist") }
             ) { Category = cat },
-            new IntegerWidgetConfigVariable("MinLevel", "Niveau minimum (mode Tous)", null, 1, 1, 100) { Category = cat },
-            new IntegerWidgetConfigVariable("MaxLevel", "Niveau maximum (mode Tous)", null, 100, 1, 100) { Category = cat },
+            new IntegerWidgetConfigVariable("MinLevel", Strings.T("Cfg.MinLevel"), null, 1, 1, 100) { Category = cat },
+            new IntegerWidgetConfigVariable("MaxLevel", Strings.T("Cfg.MaxLevel"), null, 100, 1, 100) { Category = cat },
             new BooleanWidgetConfigVariable(
-                "ShowEphemeral", "Inclure les nœuds éphémères (mode Tous)", "Nœuds éphémères utilisés pour l'aethérologie.", true
+                "ShowEphemeral", Strings.T("Cfg.Ephemeral"), Strings.T("Cfg.Ephemeral.Desc"), true
             ) { Category = cat },
             new StringWidgetConfigVariable(
-                "NameFilter", "Filtre par mots-clés (mode Tous)",
-                "Mots-clés séparés par des virgules. Seuls les nœuds dont un objet ou la zone contient un mot-clé sont suivis. Vide = tous.",
+                "NameFilter", Strings.T("Cfg.NameFilter"), Strings.T("Cfg.NameFilter.Desc"),
                 "", 512
             ) { Category = cat },
-            new IntegerWidgetConfigVariable("MaxEntries", "Nombre d'entrées dans la liste", null, 15, 1, 60) { Category = cat },
+            new IntegerWidgetConfigVariable("MaxEntries", Strings.T("Cfg.MaxEntries"), null, 15, 1, 60) { Category = cat },
             new SelectWidgetConfigVariable(
-                "ClickAction", "Action au clic sur un nœud", "Ce qui se passe quand vous cliquez sur un nœud de la liste (ou faites un clic droit sur le widget).", "TeleportFlag",
+                "ClickAction", Strings.T("Cfg.ClickAction"), Strings.T("Cfg.ClickAction.Desc"), "TeleportFlag",
                 new() {
-                    ["TeleportFlag"] = "Drapeau + carte + téléportation à l'aethérite la plus proche",
-                    ["Teleport"]     = "Téléporter à l'aethérite la plus proche",
-                    ["Map"]          = "Ouvrir la carte",
+                    ["TeleportFlag"] = Strings.T("Cfg.ClickAction.TeleportFlag"),
+                    ["Teleport"]     = Strings.T("Cfg.ClickAction.Teleport"),
+                    ["Map"]          = Strings.T("Cfg.ClickAction.Map"),
                 }
             ) { Category = cat },
             new BooleanWidgetConfigVariable(
-                "ChatAlert", "Alerte dans le chat", "Affiche un message dans le chat quand un nœud affiché apparaît.", false
+                "ChatAlert", Strings.T("Cfg.ChatAlert"), Strings.T("Cfg.ChatAlert.Desc"), false
             ) { Category = cat },
             ..GetTrackingVariables(),
         ];
@@ -104,10 +102,10 @@ public sealed unsafe class TimedNodesWidget(
 
             yield return new BooleanWidgetConfigVariable(
                 TrackId(node),
-                $"{node.ItemName} (niv. {node.Level}{(node.IsEphemeral ? ", éphémère" : "")}) — {node.ZoneName}",
-                $"Objets : {string.Join(", ", node.AllItemNames)} · Horaires ET : {FormatWindows(node)}",
+                Strings.T("Cfg.Node", node.ItemName, node.Level, node.IsEphemeral ? Strings.T("Cfg.Node.Ephemeral") : "", node.ZoneName),
+                Strings.T("Cfg.Node.Desc", string.Join(", ", node.AllItemNames), FormatWindows(node)),
                 false
-            ) { Category = "Nœuds suivis", Group = group };
+            ) { Category = Strings.T("Cfg.TrackedNodes"), Group = group };
         }
     }
 
@@ -165,10 +163,9 @@ public sealed unsafe class TimedNodesWidget(
         }
     }
 
-    private static HashSet<string>? _trackingGroupLabels;
-
+    // Pas de cache : les libellés dépendent de la langue courante.
     private static HashSet<string> TrackingGroupLabels() =>
-        _trackingGroupLabels ??= TimedNodeRepository.Nodes
+        TimedNodeRepository.Nodes
             .Select(n => $"{JobTitle(n.Job)} · {LevelBucketLabel(n.Level)}")
             .ToHashSet();
 
@@ -178,15 +175,15 @@ public sealed unsafe class TimedNodesWidget(
     private static string LevelBucketLabel(int level)
     {
         int bucket = LevelBucket(level);
-        if (bucket == 0) return "niv. 50";
+        if (bucket == 0) return Strings.T("Level", 50);
 
         int from = 51 + (bucket - 1) * 10;
-        return $"niv. {from}-{from + 9}";
+        return Strings.T("LevelRange", from, from + 9);
     }
 
     private static string TrackId(TimedNode node) => $"Track_{node.BaseId}";
 
-    private static string JobTitle(GatherJob job) => job == GatherJob.Miner ? "Mineur" : "Botaniste";
+    private static string JobTitle(GatherJob job) => Strings.T(job == GatherJob.Miner ? "Miner" : "Botanist");
 
     // --------------------------------------------------------------- Lifecycle
 
@@ -196,8 +193,8 @@ public sealed unsafe class TimedNodesWidget(
         Framework.Service<WindowManager>().OnWindowOpened += OnWindowOpened;
         Node.OnRightClick += _ => ActivateNode(_statuses.FirstOrDefault().Node);
 
-        SetText("Nœuds temporaires");
-        SetSubText("Chargement…");
+        SetText(Strings.T("WidgetName"));
+        SetSubText(Strings.T("Loading"));
     }
 
     protected override void OnUnload()
@@ -221,8 +218,8 @@ public sealed unsafe class TimedNodesWidget(
             nodes = TimedNodeRepository.Nodes;
         } catch (Exception e) {
             Logger.Error($"[TimedNodes] Impossible de lire les données du jeu : {e}");
-            SetText("Nœuds temporaires");
-            SetSubText("Erreur de chargement");
+            SetText(Strings.T("WidgetName"));
+            SetSubText(Strings.T("LoadError"));
             return;
         }
 
@@ -246,10 +243,10 @@ public sealed unsafe class TimedNodesWidget(
     private void UpdateToolbarButton()
     {
         if (_statuses.Count == 0) {
-            SetText("Nœuds temporaires");
+            SetText(Strings.T("WidgetName"));
             SetSubText(GetConfigValue<string>("TrackMode") == "Tracked"
-                ? "Aucun nœud suivi : cochez-en dans les réglages"
-                : "Aucun nœud ne correspond aux filtres");
+                ? Strings.T("NoTrackedNode")
+                : Strings.T("NoMatch"));
             ProgressBarVisibility = false;
             SetTooltip(null);
             return;
@@ -261,8 +258,8 @@ public sealed unsafe class TimedNodesWidget(
         SetGameIconId(node.IconId);
         SetText(node.ItemName);
         SetSubText(top.IsActive
-            ? $"{node.ZoneName} · reste {EorzeaClock.FormatRealDuration(top.RealSeconds)}"
-            : $"{node.ZoneName} · dans {EorzeaClock.FormatRealDuration(top.RealSeconds)}");
+            ? Strings.T("SubActive", node.ZoneName, EorzeaClock.FormatRealDuration(top.RealSeconds))
+            : Strings.T("SubUpcoming", node.ZoneName, EorzeaClock.FormatRealDuration(top.RealSeconds)));
 
         // Barre de progression : temps restant d'un nœud actif.
         ProgressBarVisibility = top.IsActive;
@@ -272,13 +269,14 @@ public sealed unsafe class TimedNodesWidget(
             SetProgressBarValue((int)top.RealSeconds);
         }
 
-        SetTooltip(
-            $"{node.ItemName} (niv. {node.Level}, {JobName(node.Job)})\n"
-            + $"{node.ZoneName} ({node.MapCoords.X:0.0}, {node.MapCoords.Y:0.0})\n"
-            + $"Objets : {string.Join(", ", node.AllItemNames)}\n"
-            + $"Horaires ET : {FormatWindows(node)}\n\n"
-            + $"Clic : liste · Clic droit : {ClickActionLabel()}"
-        );
+        SetTooltip(Strings.T(
+            "Tooltip",
+            node.ItemName, node.Level, JobName(node.Job),
+            node.ZoneName, node.MapCoords.X, node.MapCoords.Y,
+            string.Join(", ", node.AllItemNames),
+            FormatWindows(node),
+            ClickActionLabel()
+        ));
     }
 
     private void OnPopupOpened()
@@ -300,7 +298,7 @@ public sealed unsafe class TimedNodesWidget(
             _buttons.Clear();
 
             if (entries.Count == 0) {
-                Popup.Add(new MenuPopup.Header("Aucun nœud ne correspond aux filtres"));
+                Popup.Add(new MenuPopup.Header(Strings.T("NoMatch")));
                 return;
             }
 
@@ -323,8 +321,8 @@ public sealed unsafe class TimedNodesWidget(
             if (!_buttons.TryGetValue(entry.Node.BaseId, out var button)) continue;
 
             button.AltText = entry.IsActive
-                ? $"Actif · reste {EorzeaClock.FormatRealDuration(entry.RealSeconds)}"
-                : $"Dans {EorzeaClock.FormatRealDuration(entry.RealSeconds)}";
+                ? Strings.T("AltActive", EorzeaClock.FormatRealDuration(entry.RealSeconds))
+                : Strings.T("AltUpcoming", EorzeaClock.FormatRealDuration(entry.RealSeconds));
             button.AltTextColor = entry.IsActive ? new Color(0xFF66DD66) : null;
         }
     }
@@ -360,8 +358,8 @@ public sealed unsafe class TimedNodesWidget(
         if (!_firstTick && GetConfigValue<bool>("ChatAlert")) {
             foreach (var node in activeNow.Where(n => !_activeLastTick.Contains(n.BaseId))) {
                 Framework.Service<IChatGui>().Print(
-                    $"{node.ItemName} est disponible : {node.ZoneName} ({node.MapCoords.X:0.0}, {node.MapCoords.Y:0.0}) — niv. {node.Level} {JobName(node.Job)}",
-                    "Nœuds temporaires"
+                    Strings.T("ChatSpawned", node.ItemName, node.ZoneName, node.MapCoords.X, node.MapCoords.Y, node.Level, JobName(node.Job)),
+                    Strings.T("ChatSource")
                 );
             }
         }
@@ -372,8 +370,8 @@ public sealed unsafe class TimedNodesWidget(
     }
 
     private string ClickActionLabel() => GetConfigValue<string>("ClickAction") switch {
-        "Map" => "ouvrir la carte",
-        _     => "se téléporter au premier nœud",
+        "Map" => Strings.T("Hint.Map"),
+        _     => Strings.T("Hint.Teleport"),
     };
 
     private void ActivateNode(TimedNode? node)
@@ -403,7 +401,7 @@ public sealed unsafe class TimedNodesWidget(
         var player = Framework.Service<IPlayer>();
 
         if (!player.CanUseTeleportAction) {
-            toast.ShowError("Téléportation impossible pour le moment.");
+            toast.ShowError(Strings.T("CannotTeleport"));
             return;
         }
 
@@ -412,7 +410,7 @@ public sealed unsafe class TimedNodesWidget(
             zone = Framework.Service<IZoneManager>().GetZone(node.MapId);
         } catch (Exception e) {
             Logger.Error($"[TimedNodes] Zone introuvable pour la carte {node.MapId} : {e.Message}");
-            toast.ShowError("Zone introuvable.");
+            toast.ShowError(Strings.T("ZoneNotFound"));
             return;
         }
 
@@ -433,14 +431,14 @@ public sealed unsafe class TimedNodesWidget(
         }
 
         if (best.Entry == null) {
-            toast.ShowError("Aucune aethérite harmonisée pour rejoindre ce nœud.");
+            toast.ShowError(Strings.T("NoAetheryte"));
             return;
         }
 
-        string name = best.Entry.AetheryteData.ValueNullable?.PlaceName.ValueNullable?.Name.ExtractText() ?? "l'aethérite";
+        string name = best.Entry.AetheryteData.ValueNullable?.PlaceName.ValueNullable?.Name.ExtractText() ?? Strings.T("TheAetheryte");
 
         if (Telepo.Instance()->Teleport(best.Entry.AetheryteId, (byte)best.Entry.SubIndex)) {
-            Framework.Service<IChatGui>().Print($"Téléportation vers {name} ({best.Entry.GilCost} gils) pour {node.ItemName}.", "Nœuds temporaires");
+            Framework.Service<IChatGui>().Print(Strings.T("Teleporting", name, best.Entry.GilCost, node.ItemName), Strings.T("ChatSource"));
         }
     }
 
@@ -453,7 +451,7 @@ public sealed unsafe class TimedNodesWidget(
         });
     }
 
-    private static string JobName(GatherJob job) => job == GatherJob.Miner ? "mineur" : "botaniste";
+    private static string JobName(GatherJob job) => Strings.T(job == GatherJob.Miner ? "miner" : "botanist");
 
     private static string FormatWindows(TimedNode node) =>
         string.Join(", ", node.Windows.Select(w => {
