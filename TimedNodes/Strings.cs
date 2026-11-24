@@ -5,8 +5,8 @@ namespace Umbra.TimedNodes;
 /// <summary>
 /// Textes du widget en français et en anglais.
 /// Umbra ne permet pas aux widgets tiers d'ajouter leurs clés à sa propre table I18N :
-/// on suit donc simplement la langue choisie par Umbra (I18N.GetCurrentLanguage),
-/// et à défaut celle du client du jeu. Français si « fr », anglais sinon.
+/// on suit la langue du client du jeu (français si le jeu est en français, anglais sinon),
+/// et à défaut celle d'Umbra (I18N.GetCurrentLanguage).
 /// </summary>
 internal static class Strings
 {
@@ -14,14 +14,13 @@ internal static class Strings
     {
         get {
             try {
-                string lang = I18N.GetCurrentLanguage();
-                if (!string.IsNullOrEmpty(lang)) return lang.StartsWith("fr", StringComparison.OrdinalIgnoreCase);
+                return Framework.Service<IClientState>().ClientLanguage == ClientLanguage.French;
             } catch {
-                // I18N pas encore prêt : on se rabat sur la langue du client.
+                // Service Dalamud indisponible : on se rabat sur la langue d'Umbra.
             }
 
             try {
-                return Framework.Service<IClientState>().ClientLanguage == ClientLanguage.French;
+                return I18N.GetCurrentLanguage().StartsWith("fr", StringComparison.OrdinalIgnoreCase);
             } catch {
                 return false;
             }
@@ -30,6 +29,8 @@ internal static class Strings
 
     private static readonly Dictionary<string, (string Fr, string En)> Table = new() {
         ["WidgetName"]   = ("Nœuds temporaires", "Timed Nodes"),
+        ["WidgetDesc"]   = ("Affiche le prochain nœud de récolte limité, légendaire ou éphémère, avec un compte à rebours. Cliquez pour la liste complète.",
+                            "Shows the next unspoiled, legendary or ephemeral gathering node, with a countdown. Click for the full list."),
         ["Loading"]      = ("Chargement…", "Loading…"),
         ["LoadError"]    = ("Erreur de chargement", "Loading error"),
 

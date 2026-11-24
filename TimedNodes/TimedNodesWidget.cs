@@ -7,12 +7,19 @@ using FFXIVClientStructs.FFXIV.Client.Game.UI;
 
 namespace Umbra.TimedNodes;
 
-[ToolbarWidget(
+/// <summary>
+/// Le nom et la description d'un [ToolbarWidget] sont des constantes. Umbra lit l'attribut
+/// avec GetCustomAttribute au démarrage de son framework, ce qui accepte une sous-classe :
+/// celle-ci choisit le nom et la description dans la langue du jeu à ce moment-là.
+/// </summary>
+internal sealed class LocalizedToolbarWidgetAttribute() : ToolbarWidgetAttribute(
     "TimedNodesTracker",
-    "Nœuds temporaires / Timed Nodes",
-    "Prochain nœud de récolte limité, légendaire ou éphémère, avec compte à rebours. / Next unspoiled, legendary or ephemeral gathering node, with a countdown.",
+    Strings.T("WidgetName"),
+    Strings.T("WidgetDesc"),
     ["gathering", "node", "timed", "unspoiled", "legendary", "ephemeral", "récolte", "noeud", "minage", "botanique", "miner", "botanist"]
-)]
+);
+
+[LocalizedToolbarWidget]
 public sealed unsafe class TimedNodesWidget(
     WidgetInfo                  info,
     string?                     guid         = null,
